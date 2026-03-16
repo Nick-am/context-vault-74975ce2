@@ -54,7 +54,7 @@ export default function Dashboard() {
       {/* Section header */}
       <div className="mb-2 flex items-center gap-2 rounded-t-lg bg-secondary px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-wide text-glow">
         <span className="text-[8px] text-primary">▼</span>
-        System Overview
+        Marketplace Overview
       </div>
 
       {/* Stats */}

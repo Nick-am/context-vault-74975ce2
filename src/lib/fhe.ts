@@ -5,11 +5,11 @@ function bytesToHex(bytes: Uint8Array): string {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-// Zama's Sepolia fhevm contract addresses
-// See: https://docs.zama.org/protocol/solidity-guides/smart-contract/configure/contract_addresses
+// Zama's Sepolia fhevm contract addresses (from fhevmjs configs.ts)
+// See: https://github.com/zama-ai/fhevmjs/blob/main/src/configs.ts
 const KMS_CONTRACT_ADDRESS = "0xbE0E383937d564D7FF0BC3b46c51f0bF8d5C311A";
 const ACL_CONTRACT_ADDRESS = "0xf0Ffdc93b7E186bC2f8CB3dAA75D86d1930A433D";
-const GATEWAY_URL = "https://relayer.testnet.zama.org";
+const RELAYER_URL = "https://relayer.testnet.zama.org/v1";
 
 let instance: FhevmInstance | null = null;
 let initPromise: Promise<void> | null = null;
@@ -28,7 +28,7 @@ export async function ensureFhevm(): Promise<FhevmInstance> {
         kmsContractAddress: KMS_CONTRACT_ADDRESS,
         aclContractAddress: ACL_CONTRACT_ADDRESS,
         network: window.ethereum as any,
-        gatewayUrl: GATEWAY_URL,
+        relayerUrl: RELAYER_URL,
       });
     })();
   }

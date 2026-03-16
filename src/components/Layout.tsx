@@ -4,7 +4,7 @@ import WalletButton from "@/components/WalletButton";
 
 const navLinks = [
   { label: "Home", path: "/" },
-  { label: "Dashboard", path: "/dashboard" },
+  { label: "Marketplace", path: "/marketplace" },
   { label: "Create", path: "/create" },
 ];
 

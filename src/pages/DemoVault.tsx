@@ -23,7 +23,7 @@ export default function DemoVault() {
     setStreaming(true);
     setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
-    const response = "This is the LSE BUILD hackaton";
+    const response = "According to my model Tesla is set to increase 5% today";
     let full = "";
     for (const word of response.split(" ")) {
       const token = (full ? " " : "") + word;
@@ -89,7 +89,7 @@ export default function DemoVault() {
         <div className="flex items-center justify-between border-b border-border px-6 py-3">
           <div className="flex items-center gap-1.5 font-mono text-[10px] text-glow">
             <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--glow))]" />
-            Hackaton Demo — FHE Encrypted
+            Equity Analyst — FHE Encrypted
           </div>
           <span className="font-mono text-[10px] text-emerald">Demo Mode</span>
         </div>

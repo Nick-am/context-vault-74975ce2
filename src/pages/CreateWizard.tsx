@@ -22,7 +22,6 @@ export default function CreateWizard() {
   const [encrypting, setEncrypting] = useState(false);
   const [fheHandle, setFheHandle] = useState<`0x${string}` | null>(null);
   const [fheProof, setFheProof] = useState<`0x${string}` | null>(null);
-  const [demoMode, setDemoMode] = useState(false);
 
   // Step 3: Upload
   const [uploading, setUploading] = useState(false);
@@ -50,10 +49,9 @@ export default function CreateWizard() {
       const contentHashBigInt = BigInt(contentHash);
 
       // FHE encrypt via Zama gateway — produces einput handle + proof
-      const { handle, proof, demoMode: isDemo } = await encryptUint256(contentHashBigInt, address);
+      const { handle, proof } = await encryptUint256(contentHashBigInt, address);
       setFheHandle(handle);
       setFheProof(proof);
-      setDemoMode(isDemo);
 
       setActiveStep(2);
     } catch (e: any) {
@@ -218,11 +216,6 @@ export default function CreateWizard() {
               ) : encrypted ? (
                 <div className="mb-6 font-mono text-xs text-emerald">
                   Encrypted: {encrypted.length} bytes ready
-                  {demoMode && (
-                    <div className="mt-2 rounded border border-yellow-500/30 bg-yellow-500/10 px-2 py-1 text-yellow-400">
-                      DEMO MODE — FHE WASM unavailable in this browser. Using hash-based fallback.
-                    </div>
-                  )}
                 </div>
               ) : (
                 <div className="mb-6 font-mono text-xs text-muted-foreground">

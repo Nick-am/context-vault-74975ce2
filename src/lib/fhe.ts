@@ -96,14 +96,14 @@ export async function ensureFhevm(): Promise<any> {
 export async function encryptUint256(
   value: bigint,
   userAddress: string
-): Promise<{ handle: `0x${string}`; proof: `0x${string}`; demoMode: boolean }> {
-  // 1. Server-side (most reliable)
+): Promise<{ handle: `0x${string}`; proof: `0x${string}` }> {
+  // 1. Server-side (most reliable — works via Vite dev middleware)
   const serverResult = await serverSideEncrypt(value, userAddress);
   if (serverResult) {
-    return { ...serverResult, demoMode: false };
+    return serverResult;
   }
 
-  // 2. Client-side WASM
+  // 2. Client-side WASM (requires SharedArrayBuffer / COOP+COEP headers)
   const fhevm = await ensureFhevm();
   if (fhevm && fheAvailable) {
     try {
@@ -114,16 +114,15 @@ export async function encryptUint256(
       const handle = ("0x" + bytesToHex(encrypted.handles[0])) as `0x${string}`;
       const proof = ("0x" + bytesToHex(encrypted.inputProof)) as `0x${string}`;
 
-      return { handle, proof, demoMode: false };
+      return { handle, proof };
     } catch (e) {
       console.warn("FHE client encryption failed:", e);
     }
   }
 
-  // 3. Demo fallback
-  const hashHex = value.toString(16).padStart(64, "0");
-  const handle = `0x${hashHex}` as `0x${string}`;
-  const proof = `0x${"00".repeat(65)}` as `0x${string}`;
-
-  return { handle, proof, demoMode: true };
+  // 3. No FHE available — throw a clear error
+  throw new Error(
+    "FHE encryption unavailable. Please run the app locally with 'npm run dev' " +
+    "to enable server-side FHE encryption via Zama's relayer."
+  );
 }

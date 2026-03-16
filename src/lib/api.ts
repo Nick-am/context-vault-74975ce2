@@ -162,7 +162,7 @@ export async function uploadToIPFS(
   };
 
   // Upload encrypted blob
-  const blob = new Blob([encryptedBytes], { type: "application/octet-stream" });
+  const blob = new Blob([encryptedBytes as BlobPart], { type: "application/octet-stream" });
   const formData = new FormData();
   formData.append("file", blob, "encrypted-context.bin");
 

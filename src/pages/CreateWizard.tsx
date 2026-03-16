@@ -169,6 +169,21 @@ export default function CreateWizard() {
                 <option>Research</option>
               </select>
             </div>
+            <div className="mb-4">
+              <label className="mb-1 block font-mono text-[11px] uppercase text-muted-foreground">Price per Query (ETH)</label>
+              <input
+                type="number"
+                step="0.001"
+                min="0"
+                value={pricePerQuery}
+                onChange={(e) => setPricePerQuery(e.target.value)}
+                placeholder="e.g., 0.01"
+                className="w-full rounded-sm border border-border bg-surface1 px-3 py-2 text-sm outline-none focus:border-primary"
+              />
+              <p className="mt-1 font-mono text-[10px] text-muted-foreground">
+                Amount users pay per query to access your vault's context
+              </p>
+            </div>
             <div>
               <label className="mb-1 block font-mono text-[11px] uppercase text-muted-foreground">Context / System Prompt</label>
               <textarea

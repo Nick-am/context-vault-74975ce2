@@ -27,6 +27,7 @@ const App = () => (
               <Route path="/" element={<Home />} />
               <Route path="/marketplace" element={<Dashboard />} />
               <Route path="/create" element={<CreateWizard />} />
+              <Route path="/vault/demo" element={<DemoVault />} />
               <Route path="/vault/:id" element={<VaultDetail />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

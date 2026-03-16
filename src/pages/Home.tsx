@@ -28,7 +28,7 @@ export default function Home() {
             to="/dashboard"
             className="inline-flex items-center gap-2 rounded-sm border border-primary bg-transparent px-4 py-2 font-mono text-xs uppercase text-glow transition-all hover:bg-primary/10"
           >
-            Access a Vault
+            Browse Vaults
           </Link>
         </div>
       </section>

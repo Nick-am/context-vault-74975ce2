@@ -1,19 +1,53 @@
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useWallet } from "@/hooks/useWallet";
+import { getCreatorEntries, getEntry, getEntryCount, type VaultEntry } from "../lib/contract";
 
-const stats = [
-  { label: "Total Vaults", value: "142" },
-  { label: "Total Accesses", value: "8,093" },
-  { label: "Unique Agents", value: "47" },
-];
-
-const vaults = [
-  { title: "Trading Algo V2", category: "Finance", creator: "0x88...3A19", agents: "3 AGENTS", active: true },
-  { title: "Legal Boilerplate Setup", category: "Legal", creator: "0x2F...99B1", agents: "1 AGENT", active: true },
-  { title: "NPC Dialogue Rules", category: "Gaming", creator: "0x7C...44D0", agents: "12 AGENTS", active: false },
-];
+interface VaultRow {
+  id: number;
+  entry: VaultEntry;
+}
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { address, isConnected } = useWallet();
+  const [vaults, setVaults] = useState<VaultRow[]>([]);
+  const [totalCount, setTotalCount] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    getEntryCount().then(setTotalCount).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!address) {
+      setVaults([]);
+      return;
+    }
+    setLoading(true);
+    getCreatorEntries(address)
+      .then(async (ids) => {
+        const rows = await Promise.all(
+          ids.map(async (id) => {
+            const entry = await getEntry(id);
+            return { id, entry };
+          })
+        );
+        setVaults(rows);
+      })
+      .catch(() => setVaults([]))
+      .finally(() => setLoading(false));
+  }, [address]);
+
+  const stats = [
+    { label: "Total Vaults (On-Chain)", value: totalCount !== null ? String(totalCount) : "..." },
+    { label: "Your Vaults", value: String(vaults.length) },
+    { label: "Network", value: "Sepolia" },
+  ];
+
+  function truncateAddr(addr: string) {
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  }
 
   return (
     <div className="py-8">
@@ -36,46 +70,69 @@ export default function Dashboard() {
       {/* Active deployments header */}
       <div className="mb-2 flex items-center gap-2 rounded-t-lg bg-secondary px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-wide text-glow">
         <span className="text-[8px] text-primary">▼</span>
-        Active Deployments
+        Your Vaults
       </div>
 
-      {/* Vault grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {vaults.map((v) => (
-          <div
-            key={v.title}
-            onClick={() => navigate("/vault/1")}
-            className="cursor-pointer rounded-lg border border-border bg-surface1 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-glow hover:shadow-[0_4px_20px_hsl(var(--primary)/0.1)]"
+      {!isConnected ? (
+        <div className="rounded-b-lg border border-panel-border p-10 text-center">
+          <p className="font-mono text-sm text-muted-foreground">
+            Connect your wallet to view your vaults.
+          </p>
+        </div>
+      ) : loading ? (
+        <div className="rounded-b-lg border border-panel-border p-10 text-center">
+          <p className="font-mono text-sm text-muted-foreground animate-pulse">
+            Loading vaults from Sepolia...
+          </p>
+        </div>
+      ) : vaults.length === 0 ? (
+        <div className="rounded-b-lg border border-panel-border p-10 text-center">
+          <p className="mb-4 font-mono text-sm text-muted-foreground">
+            No vaults found for this wallet.
+          </p>
+          <Link
+            to="/create"
+            className="inline-flex items-center gap-2 rounded-sm border border-primary bg-primary/15 px-4 py-2 font-mono text-xs uppercase text-glow transition-all hover:bg-primary hover:text-white hover:shadow-[0_0_15px_hsl(var(--primary)/0.4)]"
           >
-            <div className="mb-4 flex items-start justify-between">
-              <h3 className="text-lg font-semibold">{v.title}</h3>
-              <span className="rounded-full border border-border bg-secondary px-2 py-0.5 font-mono text-[9px] uppercase">
-                {v.category}
-              </span>
-            </div>
-            <div className="flex flex-col gap-2 font-mono text-[11px] text-muted-foreground">
-              <div className="flex items-center justify-between">
-                <span>CREATOR</span>
-                <span>{v.creator}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>GRANTED</span>
-                <span>{v.agents}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>STATUS</span>
+            Create Your First Vault
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {vaults.map((v) => (
+            <div
+              key={v.id}
+              onClick={() => navigate(`/vault/${v.id}`)}
+              className="cursor-pointer rounded-lg border border-border bg-surface1 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-glow hover:shadow-[0_4px_20px_hsl(var(--primary)/0.1)]"
+            >
+              <div className="mb-4 flex items-start justify-between">
+                <h3 className="text-lg font-semibold">Vault #{v.id}</h3>
                 <span
                   className={`inline-block h-2 w-2 rounded-full ${
-                    v.active
+                    v.entry.active
                       ? "bg-emerald shadow-[0_0_6px_hsl(var(--emerald))]"
                       : "bg-muted-foreground"
                   }`}
                 />
               </div>
+              <div className="flex flex-col gap-2 font-mono text-[11px] text-muted-foreground">
+                <div className="flex items-center justify-between">
+                  <span>CREATOR</span>
+                  <span>{truncateAddr(v.entry.creator)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>CREATED</span>
+                  <span>{new Date(v.entry.createdAt * 1000).toLocaleDateString()}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>IPFS CID</span>
+                  <span className="max-w-[140px] truncate">{v.entry.ipfsCID}</span>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

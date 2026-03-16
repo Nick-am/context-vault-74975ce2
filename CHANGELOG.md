@@ -1,5 +1,22 @@
 # Changelog
 
+## [2026-03-16] — Frontend: wallet connect, dashboard, create wizard, vault detail
+### Added
+- `src/lib/wallet.ts` — wagmi config for Sepolia (injected connector + RPC transport)
+- `src/hooks/useWallet.ts` — React hook: address, isConnected, connect, disconnect, switchToSepolia, isWrongNetwork
+- `src/components/WalletButton.tsx` — connect/disconnect button, shows truncated address, wrong-network warning
+- Wrapped App with `WagmiProvider` + wired WalletButton into Layout nav header
+
+### Changed
+- `src/pages/Dashboard.tsx` — wired to real on-chain data via `getCreatorEntries` + `getEntry` + `getEntryCount`; shows wallet-gated vault list, empty state with link to Create, live stats from Sepolia
+- `src/pages/CreateWizard.tsx` — full 4-step flow: Write (name/category/context editor) → Encrypt (simulated FHE, placeholder for fhevmjs) → Upload to IPFS (via Pinata or demo CIDs) → Deploy on-chain (createEntry tx with MetaMask confirmation + Etherscan link)
+- `src/pages/VaultDetail.tsx` — added wallet-signed chat (signChatAccess before messaging), access control panel (grant/revoke to any address), real on-chain entry loading, empty chat state guidance
+
+### Dependencies
+- Added `wagmi` for wallet management
+
+---
+
 ## [2026-03-16] — Vite migration: API routes → client-side lib
 ### Changed
 - Deleted `app/` folder (Next.js API routes incompatible with Vite)

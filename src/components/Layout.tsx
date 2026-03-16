@@ -43,14 +43,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <main className="mx-auto max-w-[1400px] px-10">{children}</main>
       <footer className="border-t border-border mt-16">
         <div className="mx-auto max-w-[1400px] px-10 py-6 flex items-center justify-between font-mono text-[11px] text-muted-foreground">
-          <span>© {new Date().getFullYear()} ContextVault</span>
           <a
             href="https://www.linkedin.com/in/nicolas-ammann/"
             target="_blank"
             rel="noopener noreferrer"
-            className="transition-colors hover:text-glow"
+            className="rounded-sm border border-primary bg-primary/10 px-3 py-1.5 font-mono text-[11px] uppercase text-glow transition-all hover:bg-primary hover:text-white"
           >
-            Built by Nicolas Ammann
+            Get in Touch
           </a>
         </div>
       </footer>

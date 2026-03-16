@@ -377,10 +377,10 @@ export default function CreateWizard() {
               </>
             ) : (
               <button
-                onClick={() => navigate("/dashboard")}
+                onClick={() => navigate("/marketplace")}
                 className="ml-auto inline-flex items-center gap-2 rounded-sm border border-emerald bg-emerald/15 px-4 py-2 font-mono text-xs uppercase text-emerald transition-all hover:bg-emerald hover:text-white"
               >
-                View Dashboard
+                View Marketplace
               </button>
             )}
           </div>

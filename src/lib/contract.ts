@@ -110,6 +110,7 @@ export async function createEntry(
     ...contractParams,
     functionName: "createEntry",
     args: [encryptedContentHash, proof, ipfsCID, metadataURI],
+    gas: 15_000_000n,
   });
 }
 

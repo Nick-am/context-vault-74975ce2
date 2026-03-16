@@ -5,18 +5,43 @@ function bytesToHex(bytes: Uint8Array): string {
 }
 
 // Zama's Sepolia fhevm contract addresses (from fhevmjs configs.ts)
-// See: https://github.com/zama-ai/fhevmjs/blob/main/src/configs.ts
 const KMS_CONTRACT_ADDRESS = "0xbE0E383937d564D7FF0BC3b46c51f0bF8d5C311A";
 const ACL_CONTRACT_ADDRESS = "0xf0Ffdc93b7E186bC2f8CB3dAA75D86d1930A433D";
-const RELAYER_URL = "https://relayer.testnet.zama.org/v1";
+const RELAYER_URL = "https://relayer.testnet.zama.org/v1/";
 
 let instance: any = null;
 let initPromise: Promise<void> | null = null;
 let fheAvailable = true;
 
 /**
+ * Try server-side FHE encryption via the Vite dev middleware.
+ * This avoids all browser WASM/SharedArrayBuffer limitations.
+ */
+async function serverSideEncrypt(
+  value: bigint,
+  userAddress: string
+): Promise<{ handle: `0x${string}`; proof: `0x${string}` } | null> {
+  try {
+    const res = await fetch("/api/fhe-encrypt", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        value: value.toString(),
+        userAddress,
+        contractAddress: CONTEXT_VAULT_ADDRESS,
+      }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.error) return null;
+    return { handle: data.handle as `0x${string}`, proof: data.proof as `0x${string}` };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Patch WebAssembly.Memory to enforce minimum 20 initial pages.
- * fhevmjs WASM modules can hit a mismatch (19 vs 20 pages) in some browsers.
  */
 function patchWasmMemory() {
   const OriginalMemory = WebAssembly.Memory;
@@ -31,9 +56,7 @@ function patchWasmMemory() {
 }
 
 /**
- * Initialize fhevmjs (loads WASM, fetches public key from gateway).
- * Safe to call multiple times — only initializes once.
- * Falls back to demo mode if WASM/SharedArrayBuffer is unavailable.
+ * Initialize fhevmjs client-side (fallback if server endpoint unavailable).
  */
 export async function ensureFhevm(): Promise<any> {
   if (instance) return instance;
@@ -41,9 +64,7 @@ export async function ensureFhevm(): Promise<any> {
   if (!initPromise) {
     initPromise = (async () => {
       try {
-        // Patch WASM Memory to fix 19-vs-20 page mismatch
         patchWasmMemory();
-
         const { initFhevm, createInstance } = await import("fhevmjs/web");
         await initFhevm();
         instance = await createInstance({
@@ -53,7 +74,7 @@ export async function ensureFhevm(): Promise<any> {
           relayerUrl: RELAYER_URL,
         });
       } catch (e) {
-        console.warn("fhevmjs WASM init failed, using demo mode:", e);
+        console.warn("fhevmjs WASM init failed:", e);
         fheAvailable = false;
         instance = null;
       }
@@ -65,19 +86,25 @@ export async function ensureFhevm(): Promise<any> {
 }
 
 /**
- * Encrypt a uint256 value (e.g. keccak256 hash) for use with createEntry.
- * Returns the einput (bytes32 handle) and proof (bytes) needed by the contract.
+ * Encrypt a uint256 value for use with createEntry.
  *
- * If fhevmjs WASM fails to load, falls back to a deterministic demo encoding
- * derived from the content hash — the on-chain TFHE coprocessor will reject it,
- * but the rest of the UX flow still works for demonstration purposes.
+ * Strategy:
+ * 1. Try server-side encryption (Node.js — no WASM issues)
+ * 2. Try client-side fhevmjs (browser WASM)
+ * 3. Fall back to demo mode (dummy values — will revert on-chain)
  */
 export async function encryptUint256(
   value: bigint,
   userAddress: string
 ): Promise<{ handle: `0x${string}`; proof: `0x${string}`; demoMode: boolean }> {
-  const fhevm = await ensureFhevm();
+  // 1. Server-side (most reliable)
+  const serverResult = await serverSideEncrypt(value, userAddress);
+  if (serverResult) {
+    return { ...serverResult, demoMode: false };
+  }
 
+  // 2. Client-side WASM
+  const fhevm = await ensureFhevm();
   if (fhevm && fheAvailable) {
     try {
       const input = fhevm.createEncryptedInput(CONTEXT_VAULT_ADDRESS, userAddress);
@@ -89,15 +116,13 @@ export async function encryptUint256(
 
       return { handle, proof, demoMode: false };
     } catch (e) {
-      console.warn("FHE encryption failed, falling back to demo mode:", e);
+      console.warn("FHE client encryption failed:", e);
     }
   }
 
-  // Demo fallback: use the content hash as handle and a minimal proof
-  // This lets the full create-vault UX flow work for demonstration
+  // 3. Demo fallback
   const hashHex = value.toString(16).padStart(64, "0");
   const handle = `0x${hashHex}` as `0x${string}`;
-  // 65-byte dummy proof (contract may reject but UX flow completes)
   const proof = `0x${"00".repeat(65)}` as `0x${string}`;
 
   return { handle, proof, demoMode: true };

@@ -42,7 +42,7 @@ export default function Dashboard() {
   const stats = [
     { label: "Total Vaults (On-Chain)", value: totalCount !== null ? String(totalCount) : "..." },
     { label: "Your Vaults", value: String(vaults.length) },
-    { label: "Network", value: "Sepolia" },
+    { label: "Network", value: "Base Sepolia" },
   ];
 
   function truncateAddr(addr: string) {

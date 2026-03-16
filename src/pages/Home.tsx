@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 
 const steps = [
-  { num: "01 // INGEST", title: "Write Context", desc: "Define system behaviors, private knowledge bases, or sensitive instructions in plain text locally." },
-  { num: "02 // ENCRYPT", title: "FHE Processing", desc: "Data is scrambled client-side. The ciphertext is mathematically functional but entirely unreadable." },
-  { num: "03 // DEPLOY", title: "Granular Access", desc: "Store securely on-chain. Grant specific AI agent addresses computational access without decryption keys." },
+  { num: "01 // ENCRYPT", title: "Encrypt", desc: "Write your prompt. We encrypt it with FHE — mathematically unreadable to everyone." },
+  { num: "02 // LIST", title: "List", desc: "Set your price. Per query, subscription, or one-time. You control the model." },
+  { num: "03 // EARN", title: "Earn", desc: "Buyers pay, get auto-whitelisted, and access your AI. You keep the IP. We take 10%." },
 ];
 
 export default function Home() {

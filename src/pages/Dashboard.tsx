@@ -42,7 +42,7 @@ export default function Dashboard() {
   const stats = [
     { label: "Total Vaults (On-Chain)", value: totalCount !== null ? String(totalCount) : "..." },
     { label: "Your Vaults", value: String(vaults.length) },
-    { label: "Network", value: "Sepolia" },
+    { label: "Network", value: "Base Sepolia" },
   ];
 
   function truncateAddr(addr: string) {
@@ -115,7 +115,7 @@ export default function Dashboard() {
       ) : loading ? (
         <div className="rounded-b-lg border border-panel-border p-10 text-center">
           <p className="font-mono text-sm text-muted-foreground animate-pulse">
-            Loading vaults from Sepolia...
+            Loading vaults from Base Sepolia...
           </p>
         </div>
       ) : vaults.length === 0 ? (

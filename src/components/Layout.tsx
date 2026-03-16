@@ -41,6 +41,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       <main className="mx-auto max-w-[1400px] px-10">{children}</main>
+      <footer className="border-t border-border mt-16">
+        <div className="mx-auto max-w-[1400px] px-10 py-6 flex items-center justify-between font-mono text-[11px] text-muted-foreground">
+          <span>© {new Date().getFullYear()} ContextVault</span>
+          <a
+            href="https://www.linkedin.com/in/nicolas-ammann/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-glow"
+          >
+            Built by Nicolas Ammann
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }

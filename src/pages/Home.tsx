@@ -12,10 +12,10 @@ export default function Home() {
       {/* Hero */}
       <section className="flex max-w-[800px] flex-col items-start pb-20 pt-32">
         <h1 className="mb-6 text-6xl font-bold leading-[1.1] tracking-tight">
-          AI agents. Encrypted context.{"\n"}Zero visibility.
+          Spotify for AI Prompts.
         </h1>
         <p className="mb-10 max-w-[600px] text-xl text-muted-foreground">
-          Store system prompts onchain using FHE. Share access, not secrets.
+          Encrypt your system prompt onchain. Set a price. Buyers access the intelligence — never the source.
         </p>
         <div className="flex gap-4">
           <Link

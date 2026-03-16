@@ -16,6 +16,7 @@ export default function CreateWizard() {
   const [contextText, setContextText] = useState("");
   const [vaultName, setVaultName] = useState("");
   const [category, setCategory] = useState("General");
+  const [pricePerQuery, setPricePerQuery] = useState("");
 
   // Step 2: Encrypt
   const [encrypted, setEncrypted] = useState<Uint8Array | null>(null);

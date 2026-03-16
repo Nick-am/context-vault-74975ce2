@@ -27,7 +27,7 @@ export async function ensureFhevm(): Promise<FhevmInstance> {
       instance = await createInstance({
         kmsContractAddress: KMS_CONTRACT_ADDRESS,
         aclContractAddress: ACL_CONTRACT_ADDRESS,
-        network: window.ethereum,
+        network: window.ethereum as any,
         gatewayUrl: GATEWAY_URL,
       });
     })();

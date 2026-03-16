@@ -115,7 +115,7 @@ export default function Dashboard() {
       ) : loading ? (
         <div className="rounded-b-lg border border-panel-border p-10 text-center">
           <p className="font-mono text-sm text-muted-foreground animate-pulse">
-            Loading vaults from Sepolia...
+            Loading vaults from Base Sepolia...
           </p>
         </div>
       ) : vaults.length === 0 ? (

@@ -1,5 +1,19 @@
 # Changelog
 
+## [2026-03-16] — Vite migration: API routes → client-side lib
+### Changed
+- Deleted `app/` folder (Next.js API routes incompatible with Vite)
+- Created `src/lib/api.ts` — client-side chat streaming (Anthropic API direct), IPFS upload/fetch (Pinata), wallet signature verification
+- Created `src/lib/contract.ts` — onchain read/write functions via viem (getEntry, hasAccess, createEntry, grantAccess, revokeAccess, logAccess, signChatAccess)
+
+### Frontend Needs to Know
+- Import from `src/lib/api.ts`: `streamChat`, `uploadToIPFS`, `fetchFromIPFS`, `verifyWalletSignature`
+- Import from `src/lib/contract.ts`: `getEntry`, `hasAccess`, `createEntry`, `grantAccess`, `revokeAccess`, `logAccess`, `signChatAccess`, `getEntryCount`, `getCreatorEntries`, `waitForTransaction`
+- Env vars needed: `VITE_SEPOLIA_RPC_URL`, `VITE_ANTHROPIC_API_KEY`, `VITE_PINATA_API_KEY`, `VITE_PINATA_SECRET_KEY`, `VITE_IPFS_GATEWAY` (optional)
+- Chat uses `anthropic-dangerous-direct-browser-access` header — production should proxy through a backend
+
+---
+
 ## [2026-03-16] — feat/contract (Deployment + Phase 4)
 ### Added
 - Deployed ContextVault to Sepolia at `0xE5dc5e57db62dF4Db5E27882603686071BE1Fc76`

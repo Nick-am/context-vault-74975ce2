@@ -6,10 +6,10 @@ function bytesToHex(bytes: Uint8Array): string {
 }
 
 // Zama's Sepolia fhevm contract addresses
-// See: https://docs.zama.ai/fhevm/fundamentals/contracts
-const KMS_CONTRACT_ADDRESS = "0x208De73316E44722e16f6dDFF40881A3e4F86104";
-const ACL_CONTRACT_ADDRESS = "0xFee8407e2f5e3Ee68ad77cAE98c434e637f516e0";
-const GATEWAY_URL = "https://gateway.sepolia.zama.ai";
+// See: https://docs.zama.org/protocol/solidity-guides/smart-contract/configure/contract_addresses
+const KMS_CONTRACT_ADDRESS = "0xbE0E383937d564D7FF0BC3b46c51f0bF8d5C311A";
+const ACL_CONTRACT_ADDRESS = "0xf0Ffdc93b7E186bC2f8CB3dAA75D86d1930A433D";
+const GATEWAY_URL = "https://relayer.testnet.zama.org";
 
 let instance: FhevmInstance | null = null;
 let initPromise: Promise<void> | null = null;

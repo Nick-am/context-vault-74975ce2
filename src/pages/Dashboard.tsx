@@ -67,7 +67,40 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Active deployments header */}
+      {/* Featured Vaults */}
+      <div className="mb-2 flex items-center gap-2 rounded-t-lg bg-secondary px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-wide text-glow">
+        <span className="text-[8px] text-primary">▼</span>
+        Featured Vaults
+      </div>
+
+      <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Fake demo vault */}
+        <div
+          onClick={() => navigate("/vault/demo")}
+          className="cursor-pointer rounded-lg border border-border bg-surface1 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-glow hover:shadow-[0_4px_20px_hsl(var(--primary)/0.1)]"
+        >
+          <div className="mb-4 flex items-start justify-between">
+            <h3 className="text-lg font-semibold">SEO Blog Writer</h3>
+            <span className="inline-block h-2 w-2 rounded-full bg-emerald shadow-[0_0_6px_hsl(var(--emerald))]" />
+          </div>
+          <div className="flex flex-col gap-2 font-mono text-[11px] text-muted-foreground">
+            <div className="flex items-center justify-between">
+              <span>CREATOR</span>
+              <span>0x1a2B...9f4E</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>PRICE</span>
+              <span>0.01 ETH / query</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>QUERIES</span>
+              <span>1,247</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Your Vaults */}
       <div className="mb-2 flex items-center gap-2 rounded-t-lg bg-secondary px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-wide text-glow">
         <span className="text-[8px] text-primary">▼</span>
         Your Vaults

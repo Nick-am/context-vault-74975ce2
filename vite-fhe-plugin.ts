@@ -31,7 +31,7 @@ export default function fheEncryptPlugin(): Plugin {
       const chainId = Number(network.chainId);
 
       // 2. Fetch public key and CRS from Zama relayer
-      const keyData = await (await fetch(`${RELAYER_URL}keyurl`)).json();
+      const keyData: any = await (await fetch(`${RELAYER_URL}keyurl`)).json();
       const keyInfo = keyData.response.fhe_key_info[0].fhe_public_key;
       const pubKeyBytes = new Uint8Array(await (await fetch(keyInfo.urls[0])).arrayBuffer());
       const publicKey = nodeTfhe.TfheCompactPublicKey.safe_deserialize(
@@ -109,7 +109,7 @@ export default function fheEncryptPlugin(): Plugin {
               throw new Error(`Relayer error: ${response.status} ${await response.text()}`);
             }
 
-            const json = await response.json();
+            const json: any = await response.json();
             const handles = (json.response.handles || []).map(fromHexString);
             const signatures = json.response.signatures || [];
 

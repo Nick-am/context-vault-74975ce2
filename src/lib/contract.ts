@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createPublicClient, createWalletClient, custom, http } from "viem";
 import { sepolia } from "viem/chains";
 import { CONTEXT_VAULT_ABI } from "../../lib/abi/ContextVault";

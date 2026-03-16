@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import CreateWizard from "./pages/CreateWizard";
 import VaultDetail from "./pages/VaultDetail";
+import DemoVault from "./pages/DemoVault";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

@@ -14,30 +14,45 @@ let initPromise: Promise<void> | null = null;
 let fheAvailable = true;
 
 /**
- * Try server-side FHE encryption via the Vite dev middleware.
- * This avoids all browser WASM/SharedArrayBuffer limitations.
+ * FHE encryption server URLs to try, in order:
+ * 1. Standalone fhe-server.mjs (for use with Lovable hosted preview)
+ * 2. Vite dev middleware (for local npm run dev)
+ */
+const FHE_SERVER_URLS = [
+  "http://localhost:3099/api/fhe-encrypt",
+  "/api/fhe-encrypt",
+];
+
+/**
+ * Try server-side FHE encryption.
+ * Tries standalone fhe-server first, then Vite dev middleware.
  */
 async function serverSideEncrypt(
   value: bigint,
   userAddress: string
 ): Promise<{ handle: `0x${string}`; proof: `0x${string}` } | null> {
-  try {
-    const res = await fetch("/api/fhe-encrypt", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        value: value.toString(),
-        userAddress,
-        contractAddress: CONTEXT_VAULT_ADDRESS,
-      }),
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (data.error) return null;
-    return { handle: data.handle as `0x${string}`, proof: data.proof as `0x${string}` };
-  } catch {
-    return null;
+  const body = JSON.stringify({
+    value: value.toString(),
+    userAddress,
+    contractAddress: CONTEXT_VAULT_ADDRESS,
+  });
+
+  for (const url of FHE_SERVER_URLS) {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+      });
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (data.error) continue;
+      return { handle: data.handle as `0x${string}`, proof: data.proof as `0x${string}` };
+    } catch {
+      continue;
+    }
   }
+  return null;
 }
 
 /**
@@ -122,7 +137,7 @@ export async function encryptUint256(
 
   // 3. No FHE available — throw a clear error
   throw new Error(
-    "FHE encryption unavailable. Please run the app locally with 'npm run dev' " +
-    "to enable server-side FHE encryption via Zama's relayer."
+    "FHE encryption unavailable. Run 'node fhe-server.mjs' in the project directory " +
+    "to start the FHE encryption server, then retry."
   );
 }

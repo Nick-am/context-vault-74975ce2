@@ -23,7 +23,7 @@ export default function DemoVault() {
     setStreaming(true);
     setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
-    const response = "This is the LSE BUILD hackaton";
+    const response = "According to my model Tesla is set to increase 5% today";
     let full = "";
     for (const word of response.split(" ")) {
       const token = (full ? " " : "") + word;

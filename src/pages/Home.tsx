@@ -12,21 +12,24 @@ export default function Home() {
       {/* Hero */}
       <section className="flex max-w-[800px] flex-col items-start pb-20 pt-32">
         <h1 className="mb-6 text-6xl font-bold leading-[1.1] tracking-tight">
-          Secure AI Memory.{"\n"}Zero Knowledge.
+          AI agents. Encrypted context.{"\n"}Zero visibility.
         </h1>
         <p className="mb-10 max-w-[600px] text-xl text-muted-foreground">
-          Encrypt system prompts using Fully Homomorphic Encryption. Grant AI agents access to context without ever revealing the underlying data.
+          Store system prompts onchain using FHE. Share access, not secrets.
         </p>
         <div className="flex gap-4">
           <Link
             to="/create"
-            className="inline-flex items-center gap-2 rounded-sm border border-primary bg-primary/15 px-4 py-2 font-mono text-xs uppercase text-glow shadow-[0_0_10px_hsl(var(--primary)/0.1)] transition-all hover:bg-primary hover:text-white hover:shadow-[0_0_15px_hsl(var(--primary)/0.4)]"
+            className="inline-flex items-center gap-2 rounded-sm border border-primary bg-primary px-4 py-2 font-mono text-xs uppercase text-primary-foreground shadow-[0_0_10px_hsl(var(--primary)/0.2)] transition-all hover:bg-primary/90 hover:shadow-[0_0_15px_hsl(var(--primary)/0.4)]"
           >
-            Launch Vault
+            Create a Vault
           </Link>
-          <button className="inline-flex items-center gap-2 rounded-sm border border-primary bg-secondary px-4 py-2 font-mono text-xs uppercase text-glow transition-all hover:bg-primary hover:text-white hover:shadow-[0_0_15px_hsl(var(--primary)/0.4)]">
-            Read Documentation
-          </button>
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center gap-2 rounded-sm border border-primary bg-transparent px-4 py-2 font-mono text-xs uppercase text-glow transition-all hover:bg-primary/10"
+          >
+            Access a Vault
+          </Link>
         </div>
       </section>
 

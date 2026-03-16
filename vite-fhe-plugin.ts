@@ -109,7 +109,7 @@ export default function fheEncryptPlugin(): Plugin {
               throw new Error(`Relayer error: ${response.status} ${await response.text()}`);
             }
 
-            const json = await response.json();
+            const json: any = await response.json();
             const handles = (json.response.handles || []).map(fromHexString);
             const signatures = json.response.signatures || [];
 

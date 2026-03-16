@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useWallet } from "@/hooks/useWallet";
 import { uploadToIPFS } from "../lib/api";
 import { createEntry, waitForTransaction } from "../lib/contract";
+import { encryptUint256 } from "../lib/fhe";
 
 const wizardSteps = ["STEP 01: WRITE", "STEP 02: ENCRYPT", "STEP 03: UPLOAD", "STEP 04: DEPLOY"];
 
@@ -19,6 +20,8 @@ export default function CreateWizard() {
   // Step 2: Encrypt
   const [encrypted, setEncrypted] = useState<Uint8Array | null>(null);
   const [encrypting, setEncrypting] = useState(false);
+  const [fheHandle, setFheHandle] = useState<`0x${string}` | null>(null);
+  const [fheProof, setFheProof] = useState<`0x${string}` | null>(null);
 
   // Step 3: Upload
   const [uploading, setUploading] = useState(false);
@@ -29,19 +32,30 @@ export default function CreateWizard() {
   const [txHash, setTxHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Step 2 handler: simulate FHE encryption (real fhevmjs would go here)
+  // Step 2 handler: FHE encrypt via fhevmjs
   async function handleEncrypt() {
+    if (!address) return;
     setEncrypting(true);
     setError(null);
     try {
-      // Simulate FHE encryption delay — in production, use fhevmjs to create einput + proof
-      await new Promise((r) => setTimeout(r, 1500));
+      // Encode context to bytes (for IPFS upload)
       const encoder = new TextEncoder();
       const bytes = encoder.encode(contextText);
       setEncrypted(bytes);
+
+      // Compute keccak256 hash of the context, then FHE-encrypt it
+      const { keccak256, toBytes } = await import("viem");
+      const contentHash = keccak256(toBytes(contextText));
+      const contentHashBigInt = BigInt(contentHash);
+
+      // FHE encrypt via Zama gateway — produces einput handle + proof
+      const { handle, proof } = await encryptUint256(contentHashBigInt, address);
+      setFheHandle(handle);
+      setFheProof(proof);
+
       setActiveStep(2);
     } catch (e: any) {
-      setError(e.message || "Encryption failed");
+      setError(e.message || "FHE encryption failed");
     } finally {
       setEncrypting(false);
     }
@@ -67,20 +81,15 @@ export default function CreateWizard() {
     }
   }
 
-  // Step 4 handler: create on-chain entry
+  // Step 4 handler: create on-chain entry with real FHE handle + proof
   async function handleDeploy() {
-    if (!cids) return;
+    if (!cids || !fheHandle || !fheProof) return;
     setDeploying(true);
     setError(null);
     try {
-      // Generate a placeholder encrypted content hash + proof
-      // In production, fhevmjs would provide these from the FHE encryption step
-      const contentHashPlaceholder = ("0x" + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")) as `0x${string}`;
-      const proofPlaceholder = "0x00" as `0x${string}`;
-
       const hash = await createEntry(
-        contentHashPlaceholder,
-        proofPlaceholder,
+        fheHandle,
+        fheProof,
         cids.encryptedCID,
         `ipfs://${cids.metadataCID}`
       );

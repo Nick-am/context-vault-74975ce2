@@ -80,7 +80,7 @@ export default function Dashboard() {
           className="cursor-pointer rounded-lg border border-border bg-surface1 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-glow hover:shadow-[0_4px_20px_hsl(var(--primary)/0.1)]"
         >
           <div className="mb-4 flex items-start justify-between">
-            <h3 className="text-lg font-semibold">SEO Blog Writer</h3>
+            <h3 className="text-lg font-semibold">Hackaton Demo</h3>
             <span className="inline-block h-2 w-2 rounded-full bg-emerald shadow-[0_0_6px_hsl(var(--emerald))]" />
           </div>
           <div className="flex flex-col gap-2 font-mono text-[11px] text-muted-foreground">

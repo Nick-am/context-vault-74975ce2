@@ -49,9 +49,9 @@ export default function Home() {
 
       {/* Social proof */}
       <div className="mb-20 flex items-center gap-6 border-y border-border py-4 font-mono text-xs uppercase text-muted-foreground">
-        <span className="text-glow">2,048</span> Vaults Secured
+        <span className="text-glow">2,048</span> Prompts Protected
         <span className="text-muted-foreground">•</span>
-        <span className="text-glow">14,592</span> Agent Accesses
+        <span className="text-glow">$14,592</span> Creator Earnings
         <span className="text-muted-foreground">•</span>
         <span className="text-glow">100%</span> FHE-Encrypted
       </div>
